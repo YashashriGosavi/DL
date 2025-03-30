@@ -1,0 +1,56 @@
+5A] Aim: Evaluating feed forward deep network for regression using KFold cross validation.
+
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import StratifiedKFold
+from sklearn.preprocessing import StandardScaler
+from keras.models import Sequential
+from keras.layers import Dense, Dropout
+
+# Load the data
+dataset = pd.read_csv("/content/diabetes.csv")
+
+# Handle NaN values by filling them with the mean of each column
+dataset = dataset.fillna(dataset.mean())
+
+# Split the data into X and Y
+X = dataset.iloc[:, 0:8].values
+Y = dataset.iloc[:, 8].values
+
+# Normalize the data
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+# Define Stratified KFold cross-validation
+kfold = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+# Initialize variables to track accuracy
+accuracies = []
+
+# Loop through each fold
+for fold, (train_index, test_index) in enumerate(kfold.split(X, Y), 1):
+    print(f"\nFold {fold} Training:")
+    X_train, X_test = X[train_index], X[test_index]
+    Y_train, Y_test = Y[train_index], Y[test_index]
+
+    # Create the model
+    model = Sequential()
+    model.add(Dense(16, input_dim=8, activation='relu'))
+    model.add(Dropout(0.2))  # Dropout to prevent overfitting
+    model.add(Dense(8, activation='relu'))
+    model.add(Dense(1, activation='sigmoid'))
+
+    # Compile the model
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    # Train the model and print accuracy for each epoch
+    history = model.fit(X_train, Y_train, epochs=150, batch_size=10, verbose=1)
+
+    # Evaluate the model
+    _, accuracy = model.evaluate(X_test, Y_test, verbose=0)
+    accuracies.append(accuracy)
+    print(f'Fold Accuracy: {accuracy * 100:.2f}%')
+
+# Final average accuracy
+final_accuracy = np.mean(accuracies) * 100
+print(f'\nFinal Accuracy: {final_accuracy:.2f}%')
