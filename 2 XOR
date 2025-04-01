@@ -1,33 +1,29 @@
 import numpy as np
 import tensorflow as tf
 
-# Define the XOR dataset
 X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]], dtype=np.float32)
 y = np.array([[0], [1], [1], [0]], dtype=np.float32)
 
-# Define the model
+
 model = tf.keras.Sequential([
     tf.keras.layers.Dense(2, activation='sigmoid', input_shape=(2,)), 
     tf.keras.layers.Dense(1, activation='sigmoid') 
 ])
 
-# Compile the model
+
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-# Train the model
 model.fit(X, y, epochs=10000, verbose=0) 
 
-# Evaluate the model
 loss, accuracy = model.evaluate(X, y, verbose=0)
 print(f"Loss: {loss:.4f}")
 print(f"Accuracy: {accuracy:.4f}")
 
-# Make predictions
 predictions = model.predict(X)
 print("Predictions:")
 print(predictions)
 
-# Print rounded predictions (for clearer XOR output)
+
 rounded_predictions = np.round(predictions)
 print("\nRounded Predictions:")
 rounded_predictions
