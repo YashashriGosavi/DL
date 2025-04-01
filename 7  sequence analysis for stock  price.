@@ -1,6 +1,6 @@
 7] Aim: Demonstrate recurrent neural network that learns to perform sequence analysis for stock 
 price. 
-
+# Google Stocks Data Anomaly Detection
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
